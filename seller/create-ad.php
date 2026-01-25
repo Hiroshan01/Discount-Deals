@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $expiry_date = sanitizeInput($_POST['expiry_date']);
     $location = sanitizeInput($_POST['location']);
     $external_url = sanitizeInput($_POST['external_url']);
+    $phone = sanitizeInput($_POST['phone']);
     
     // Image upload
     $image_path = null;
@@ -51,20 +52,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Insert advertisement
-    $insert_query = "INSERT INTO advertisements (seller_id, title, description, category, original_price, 
-                     discounted_price, quantity_available, expiry_date, location, external_url, image_path) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $insert_query = "INSERT INTO advertisements 
+                     (seller_id, title, description, category, original_price, 
+                      discounted_price, quantity_available, expiry_date, location, 
+                      phone, external_url, image_path) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($insert_query);
-    $stmt->bind_param("isssddiisss", $seller_id, $title, $description, $category, $original_price, 
-                      $discounted_price, $quantity_available, $expiry_date, $location, $external_url, $image_path);
+    // Type string: i=seller_id, s=title, s=description, s=category, 
+    // d=original_price, d=discounted_price, i=quantity_available, 
+    // s=expiry_date, s=location, s=phone, s=external_url, s=image_path
+    $stmt->bind_param("isssddisssss", $seller_id, $title, $description, 
+                      $category, $original_price, $discounted_price, 
+                      $quantity_available, $expiry_date, $location, 
+                      $phone, $external_url, $image_path);
     
-  if ($stmt->execute()) {
-            $success = 'Advertisement created successfully! Please wait for admin approval.';
-        } else {
-            $error = 'An error occurred while creating the advertisement.';
-        }
-
+    if ($stmt->execute()) {
+        $success = 'Advertisement created successfully! Please wait for admin approval.';
+    } else {
+        $error = 'An error occurred while creating the advertisement.';
+    }
     
     $stmt->close();
 }
@@ -154,11 +161,19 @@ include '../includes/navbar.php';
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Your website / order page (URL)</label>
-                            <input type="url" name="external_url" class="form-control"
-                                placeholder="https://example.com/order">
-                            <small class="text-muted">A link where customers can order or contact you</small>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" name="phone" class="form-control" placeholder="07X-XXXXXXXXX">
+                                <small class="text-muted">For contacting Seller</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Your website / order page (URL)</label>
+                                <input type="url" name="external_url" class="form-control"
+                                    placeholder="https://example.com/order">
+                                <small class="text-muted">A link where customers can order or contact you</small>
+                            </div>
                         </div>
 
                         <div class="mb-3">

@@ -140,6 +140,15 @@ include '../includes/navbar.php';
                         </a>
                     </p>
                     <?php endif; ?>
+                    <?php if (!empty($deal['phone'])): ?>
+                    <p class="mb-2">
+                        <i class="fas fa-mobile-alt"></i>
+                        <a href="tel:<?php echo $deal['phone']; ?>">
+                            <?php echo htmlspecialchars($deal['phone']); ?>
+                        </a>
+                        <small class="text-muted">(For Advertisement)</small>
+                    </p>
+                    <?php endif; ?>
 
                     <?php if ($deal['business_email']): ?>
                     <p class="mb-2">

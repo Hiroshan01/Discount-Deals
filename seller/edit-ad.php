@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $expiry_date = sanitizeInput($_POST['expiry_date']);
     $location = sanitizeInput($_POST['location']);
     $external_url = sanitizeInput($_POST['external_url']);
+    $phone = sanitizeInput($_POST['phone']);
     
     // Image upload (optional)
     $image_path = $ad['image_path']; // Keep existing image
@@ -76,13 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                      title = ?, description = ?, category = ?, 
                      original_price = ?, discounted_price = ?, 
                      quantity_available = ?, expiry_date = ?, 
-                     location = ?, external_url = ?, image_path = ?,
+                     location = ?,phone = ?, external_url = ?, image_path = ?,
                      status = 'pending'
                      WHERE ad_id = ? AND seller_id = ?";
     
     $stmt = $conn->prepare($update_query);
     $stmt->bind_param("sssddissssii", $title, $description, $category, $original_price, 
-                      $discounted_price, $quantity_available, $expiry_date, $location, 
+                      $discounted_price, $quantity_available, $expiry_date, $location, $phone,
                       $external_url, $image_path, $ad_id, $seller_id);
     
     if ($stmt->execute()) {
@@ -191,6 +192,12 @@ include '../includes/navbar.php';
                                 <input type="text" name="location" class="form-control"
                                     value="<?php echo htmlspecialchars($ad['location']); ?>">
                             </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-control"
+                                value="<?php echo htmlspecialchars($ad['phone']); ?>" placeholder="077-1234567">
+                            <small class="text-muted">For contacting seller</small>
                         </div>
 
                         <div class="mb-3">
