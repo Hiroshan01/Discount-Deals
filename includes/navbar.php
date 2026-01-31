@@ -41,6 +41,10 @@
                                 <i class="fas fa-cog"></i> Admin Panel
                             </a>
                         </li>
+                        <li><a class="dropdown-item" href="reports.php#monthly-discounts">
+                                <i class="fas fa-tags me-1"></i> Monthly Discounts
+                            </a></li>
+
 
                         <!-- Normal user -->
                         <?php else: ?>

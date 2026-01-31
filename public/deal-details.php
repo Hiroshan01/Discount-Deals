@@ -191,6 +191,19 @@ include '../includes/navbar.php';
                     </a>
                 </div>
             </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-share-alt"></i> Visit Our Pages</h6>
+                </div>
+                <div class="card-body">
+
+                    <i class="fab fa-facebook"></i> Facebook
+
+                    <i class="fab fa-twitter"></i> Twitter
+
+                </div>
+            </div>
         </div>
     </div>
 </div>
