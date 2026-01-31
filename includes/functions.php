@@ -56,25 +56,45 @@ function loginUser($email, $password) {
 #Get Advertisment
 function getAdvertisement($ad_id) {
     $conn = getDBConnection();
-    
-    $query = "SELECT a.*, s.business_name, s.business_phone, s.business_email, s.website_url, u.full_name 
-              FROM advertisements a 
-              INNER JOIN seller_profiles s ON a.seller_id = s.seller_id 
-              INNER JOIN users u ON s.user_id = u.user_id 
-              WHERE a.ad_id = ?";
-    
+    if (!$conn) {
+        return null;
+    }
+
+    $query = "
+        SELECT
+            a.*,
+            s.business_name,
+            s.business_phone,
+            s.business_email,
+            s.website_url,
+            u.full_name,
+            a.facebook_url,
+            a.instagram_url,
+            a.external_url
+        FROM advertisements a
+        INNER JOIN seller_profiles s ON a.seller_id = s.seller_id
+        INNER JOIN users u ON s.user_id = u.user_id
+        WHERE a.ad_id = ?
+    ";
+
     $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        $conn->close();
+        return null;
+    }
+
     $stmt->bind_param("i", $ad_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     $ad = $result->fetch_assoc();
-    
+
     $stmt->close();
     $conn->close();
-    
-    return $ad;
+
+    return $ad;  // returns associative array or null if not found
 }
+
 
 #Get All Advertisements(Filter Option)
 function getAllAdvertisements($filters = []) {

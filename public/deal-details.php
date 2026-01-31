@@ -36,7 +36,23 @@ $page_title = htmlspecialchars($deal['title']) . ' - Discount Deals';
 
 include '../includes/header.php';
 include '../includes/navbar.php';
+
+
 ?>
+<style>
+.btn-facebook {
+    background: linear-gradient(135deg, #1877F2 0%, #166FE5 100%);
+    border-color: #1877F2;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-facebook:hover {
+    background: linear-gradient(135deg, #166FE5 0%, #1458C3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(24, 119, 242, 0.4);
+}
+</style>
 
 <div class="container mt-4 mb-5">
     <nav aria-label="breadcrumb">
@@ -192,18 +208,83 @@ include '../includes/navbar.php';
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="mb-0"><i class="fas fa-share-alt"></i> Visit Our Pages</h6>
+            <!-- Advertiser Social Media Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-globe me-2"></i>Visit Seller Pages</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <?php if (!empty($deal['facebook_url'])): ?>
+                        <div class="col-12">
+                            <a href="<?php echo htmlspecialchars($deal['facebook_url']); ?>" target="_blank"
+                                class="btn btn-facebook w-100 p-3 text-start shadow-sm mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fab fa-facebook-f fa-lg me-3 text-white"></i>
+                                    <div>
+                                        <div class="fw-bold text-white">Facebook Page</div>
+                                        <small class="opacity-90">Visit business page</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php endif; ?>
 
-                    <i class="fab fa-facebook"></i> Facebook
+                        <?php if (!empty($deal['external_url'])): ?>
+                        <div class="col-12">
+                            <a href="<?php echo htmlspecialchars($deal['external_url']); ?>" target="_blank"
+                                class="btn btn-outline-primary w-100 p-3 text-start shadow-sm mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-globe fa-lg me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Official Website</div>
+                                        <small>Visit business website</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php endif; ?>
 
-                    <i class="fab fa-twitter"></i> Twitter
+                        <?php if (!empty($deal['phone'])): ?>
+                        <div class="col-12">
+                            <a href="https://wa.me/94<?php echo preg_replace('/[^0-9]/', '', $deal['phone']); ?>?text=<?php echo urlencode($deal['title'] . ' - Check this deal!'); ?>"
+                                target="_blank" class="btn btn-success w-100 p-3 text-start shadow-sm mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fab fa-whatsapp fa-lg me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">WhatsApp Chat</div>
+                                        <small><?php echo htmlspecialchars($deal['phone']); ?></small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php endif; ?>
 
+                        <?php if (!empty($deal['instagram_url'])): ?>
+                        <div class="col-12">
+                            <a href="<?php echo htmlspecialchars($deal['instagram_url']); ?>" target="_blank"
+                                class="btn btn-outline-danger w-100 p-3 text-start shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fab fa-instagram fa-lg me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Instagram</div>
+                                        <small>Follow on Instagram</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (empty($deal['facebook_url']) && empty($deal['website_url']) && empty($deal['whatsapp_number']) && empty($deal['instagram_url'])): ?>
+                        <div class="text-center py-4">
+                            <i class="fas fa-info-circle text-muted fa-2x mb-2"></i>
+                            <p class="text-muted mb-0">No social media links provided</p>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

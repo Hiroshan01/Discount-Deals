@@ -33,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location = sanitizeInput($_POST['location']);
     $external_url = sanitizeInput($_POST['external_url']);
     $phone = sanitizeInput($_POST['phone']);
+    $facebook_url = sanitizeInput($_POST['facebook_url']);
+    $instagram_url = sanitizeInput($_POST['instagram_url']);
     
     // Image upload
     $image_path = null;
@@ -55,17 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insert_query = "INSERT INTO advertisements 
                      (seller_id, title, description, category, original_price, 
                       discounted_price, quantity_available, expiry_date, location, 
-                      phone, external_url, image_path) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                      phone, external_url, facebook_url, instagram_url,image_path) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
     
     $stmt = $conn->prepare($insert_query);
     // Type string: i=seller_id, s=title, s=description, s=category, 
     // d=original_price, d=discounted_price, i=quantity_available, 
     // s=expiry_date, s=location, s=phone, s=external_url, s=image_path
-    $stmt->bind_param("isssddisssss", $seller_id, $title, $description, 
+    $stmt->bind_param("isssddisssssss", $seller_id, $title, $description, 
                       $category, $original_price, $discounted_price, 
                       $quantity_available, $expiry_date, $location, 
-                      $phone, $external_url, $image_path);
+                      $phone, $external_url, $facebook_url, $instagram_url, $image_path);
     
     if ($stmt->execute()) {
         $success = 'Advertisement created successfully! Please wait for admin approval.';
@@ -173,6 +175,20 @@ include '../includes/navbar.php';
                                 <input type="url" name="external_url" class="form-control"
                                     placeholder="https://example.com/order">
                                 <small class="text-muted">A link where customers can order or contact you</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Facebook Page</label>
+                                <input type="url" name="facebook_url" class="form-control"
+                                    placeholder="https://facebook.com/yourpage">
+                                <small class="text-muted">Your business Facebook page</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Instagram</label>
+                                <input type="url" name="instagram_url" class="form-control"
+                                    placeholder="https://instagram.com/yourpage">
+                                <small class="text-muted">Your Instagram business page</small>
                             </div>
                         </div>
 
