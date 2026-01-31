@@ -17,7 +17,14 @@ $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : '';
 $conn = getDBConnection();
 
 // Build query
-$query = "SELECT * FROM users WHERE 1=1";
+// Build query
+$query = "
+    SELECT u.*, sp.nic_number, sp.br_number
+    FROM users u
+    LEFT JOIN seller_profiles sp ON u.user_id = sp.user_id
+    WHERE 1=1
+";
+
 $params = [];
 $types = '';
 
@@ -163,6 +170,8 @@ include '../includes/navbar.php';
                                     <th>Username</th>
                                     <th>Email</th>
                                     <th>Phone</th>
+                                    <th>NIC</th>
+                                    <th>BR Number</th>
                                     <th>Type</th>
                                     <th>Status</th>
                                     <th>Registered</th>
@@ -177,6 +186,10 @@ include '../includes/navbar.php';
                                     <td><?php echo htmlspecialchars($user['username']); ?></td>
                                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                                     <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['nic_number'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($user['br_number'] ?? 'N/A'); ?></td>
+
+
                                     <td>
                                         <?php
                                             $badge_class = [

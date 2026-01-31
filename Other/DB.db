@@ -26,6 +26,8 @@ CREATE TABLE seller_profiles (
     website_url VARCHAR(255),
     description TEXT,
     logo_image VARCHAR(255),
+    br_number VARCHAR(20),
+    nic_number VARCHAR(20),
     is_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,

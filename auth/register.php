@@ -15,35 +15,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = sanitizeInput($_POST['full_name']);
     $phone = sanitizeInput($_POST['phone']);
     $user_type = sanitizeInput($_POST['user_type']);
-    
+
     // Validation
     if ($password !== $confirm_password) {
         $error = 'Password is not Match.';
     } elseif (strlen($password) < 6) {
         $error = 'Password must be at least 6 characters long.';
     } else {
-        $user_id = registerUser($username, $email, $password, $full_name, $phone, $user_type);
         
-        if ($user_id) {
-            // Seller Profile Create
-            if ($user_type === 'seller' && !empty($_POST['business_name'])) {
-                $conn = getDBConnection();
-                $business_name = sanitizeInput($_POST['business_name']);
-                $business_type = sanitizeInput($_POST['business_type']);
-                
-                $stmt = $conn->prepare("INSERT INTO seller_profiles (user_id, business_name, business_type) VALUES (?, ?, ?)");
-                $stmt->bind_param("iss", $user_id, $business_name, $business_type);
-                $stmt->execute();
-                $stmt->close();
-                $conn->close();
+        
+        if ($user_type === 'seller' && !empty($_POST['buyer_nic'])) {
+            $buyer_nic = sanitizeInput($_POST['seller_nic']);
+
+            // Check if NIC matches old (9 digits + V) or new (12 digits) format
+            if (!preg_match('/^([0-9]{9}[VvXx]|[0-9]{12})$/', $buyer_nic)) {
+                $error = 'Invalid NIC format. Please enter a valid NIC number.';
             }
-            
-            $success = 'Registration Successful! You can now login.';
-        } else {
-            $error = 'Registration Failed.';
+        }
+
+        // only register if there is no error
+        if (!$error) {
+            $user_id = registerUser($username, $email, $password, $full_name, $phone, $user_type);
+
+            if ($user_id) {
+                // Seller Profile Create
+                if ($user_type === 'seller' && !empty($_POST['business_name'])) {
+                    $conn = getDBConnection();
+                    $business_name = sanitizeInput($_POST['business_name']);
+                    $business_type = sanitizeInput($_POST['business_type']);
+                    $seller_nic = sanitizeInput($_POST['seller_nic']);
+                    $business_registration_number = !empty($_POST['business_registration_number'])
+                        ? sanitizeInput($_POST['business_registration_number'])
+                        : null;
+
+                    $stmt = $conn->prepare("INSERT INTO seller_profiles (user_id, business_name, business_type, nic_number, br_number) VALUES (?, ?, ?, ?, ?)");
+                    $stmt->bind_param("issss", $user_id, $business_name, $business_type, $seller_nic, $business_registration_number);
+                    $stmt->execute();
+                    $stmt->close();
+                    $conn->close();
+                }
+
+                $success = 'Registration Successful! You can now login.';
+            } else {
+                $error = 'Registration Failed.';
+            }
         }
     }
 }
+
 
 include '../includes/header.php';
 include '../includes/navbar.php';
@@ -104,7 +123,7 @@ include '../includes/navbar.php';
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Acount Type *</label>
+                            <label class="form-label">Account Type *</label>
                             <select name="user_type" class="form-select" id="userType" required>
                                 <option value="buyer">(Buyer)</option>
                                 <option value="seller">(Seller)</option>
@@ -119,6 +138,14 @@ include '../includes/navbar.php';
                             <div class="mb-3">
                                 <label class="form-label">Business Name *</label>
                                 <input type="text" name="business_name" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Seller's NIC *</label>
+                                <input type="text" name="seller_nic" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Business Registration Number </label>
+                                <input type="text" name="business_registration_number" class="form-control">
                             </div>
 
                             <div class="mb-3">

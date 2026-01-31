@@ -10,9 +10,9 @@ if (!isLoggedIn() || !isSeller()) {
 $page_title = 'Manage Advertisements - Discount Deals';
 $user_id = $_SESSION['user_id'];
 
-// Get seller_id
+// Get seller_id and verification status
 $conn = getDBConnection();
-$stmt = $conn->prepare("SELECT seller_id FROM seller_profiles WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT seller_id, is_verified FROM seller_profiles WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -191,22 +191,27 @@ include '../includes/navbar.php';
                                     </td>
                                     <td>
                                         <?php
-                                                $status_badges = [
-                                                    'pending' => 'bg-warning',
-                                                    'approved' => 'bg-success',
-                                                    'rejected' => 'bg-danger',
-                                                    'expired' => 'bg-secondary'
-                                                ];
-                                                $status_labels = [
-                                                    'pending' => 'Pending',
-                                                    'approved' => 'Approved',
-                                                    'rejected' => 'Rejected',
-                                                    'expired' => 'Expired'
-                                                ];
-                                                ?>
+                                          $status_badges = [
+                                            'pending' => 'bg-warning',
+                                            'approved' => 'bg-success',
+                                            'rejected' => 'bg-danger',
+                                            'expired' => 'bg-secondary'
+                                        ];
+                                        ?>
                                         <span class="badge <?php echo $status_badges[$ad['status']]; ?>">
-                                            <?php echo $status_labels[$ad['status']]; ?>
+                                            <?php echo $ad['status']; ?>
                                         </span>
+
+                                        <?php 
+                                        // Check if self_approved field exists and show badge
+                                        if (isset($ad['self_approved']) && $ad['self_approved'] && 
+                                            isset($ad['approved_by']) && $ad['approved_by'] == 'seller'): 
+                                        ?>
+                                        <br>
+                                        <span class="badge bg-info mt-1">
+                                            <i class="fas fa-user-check"></i> Self-Approved
+                                        </span>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <i class="fas fa-eye"></i> <?php echo $ad['view_count']; ?><br>
@@ -222,6 +227,17 @@ include '../includes/navbar.php';
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <?php 
+                                            // Self-approve button (if seller is verified and ad is pending)
+                                            if (isset($seller['is_verified']) && $seller['is_verified'] && $ad['status'] == 'pending'): 
+                                            ?>
+                                            <a href="self-approve-ad.php?id=<?php echo $ad['ad_id']; ?>"
+                                                class="btn btn-success" title="Self-Approve"
+                                                onclick="return confirm('Do you want to approve this advertisement?');">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <?php endif; ?>
+
                                             <a href="delete-ad.php?id=<?php echo $ad['ad_id']; ?>"
                                                 class="btn btn-danger" title="Delete"
                                                 onclick="return confirm('Are you sure you want to delete this advertisement?');">

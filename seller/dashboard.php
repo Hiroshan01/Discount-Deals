@@ -90,6 +90,30 @@ include '../includes/navbar.php';
             </div>
         </div>
     </div>
+    <?php if (!$seller['is_verified']): ?>
+    <!-- Verification Alert -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle"></i> Business Verification Required
+                </h5>
+                <p>
+                    Enter your BR or NIC number to self-approve your advertisements.
+                    Currently, your advertisements are waiting for admin approval.
+                </p>
+                <hr>
+                <a href="verify-business.php" class="btn btn-warning">
+                    <i class="fas fa-shield-alt"></i> Verify Now
+                </a>
+                <button type="button" class="btn btn-light" data-bs-dismiss="alert">
+                    Later
+                </button>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
 
     <!-- Quick Actions -->
     <div class="row mb-4">

@@ -58,7 +58,17 @@ $pending_ads_query = "SELECT a.*, s.business_name, u.full_name
 $pending_ads = $conn->query($pending_ads_query)->fetch_all(MYSQLI_ASSOC);
 
 // Recent users
-$recent_users_query = "SELECT * FROM users ORDER BY created_at DESC LIMIT 5";
+$recent_users_query = "
+    SELECT 
+        u.*,
+        sp.nic_number,
+        sp.br_number
+    FROM users u
+    LEFT JOIN seller_profiles sp ON u.user_id = sp.user_id
+    ORDER BY u.created_at DESC
+    LIMIT 5
+";
+
 $recent_users = $conn->query($recent_users_query)->fetch_all(MYSQLI_ASSOC);
 
 // Category statistics
@@ -228,6 +238,8 @@ include '../includes/navbar.php';
                                     <th>Title</th>
                                     <th>Seller</th>
                                     <th>Category</th>
+                                    <th>NIC</th>
+                                    <th>BR Number</th>
                                     <th>Date</th>
                                     <th>Actions</th>
                                 </tr>
@@ -327,6 +339,8 @@ include '../includes/navbar.php';
                                             <?php echo ucfirst($user['user_type']); ?>
                                         </span>
                                     </td>
+                                    <td><?php echo htmlspecialchars($user['nic_number'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($user['br_number'] ?? 'N/A'); ?></td>
                                     <td><?php echo date('Y-m-d H:i', strtotime($user['created_at'])); ?></td>
                                     <td>
                                         <span
